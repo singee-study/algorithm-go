@@ -1,6 +1,7 @@
 package class44
 
 import (
+	"algorithm/utils"
 	"math"
 )
 
@@ -14,12 +15,12 @@ func TSP(matrix [][]int, k int) int {
 	n := len(matrix)
 
 	state := (1 << n) - 1
-	dp := new2dSlice(1<<n, len(matrix))
+	dp := utils.New2dSliceV(1<<n, len(matrix), -1)
 
-	return process(matrix, k, dp, state, k)
+	return tsp(matrix, k, dp, state, k)
 }
 
-func process(matrix [][]int, k int, dp [][]int, state int, start int) int {
+func tsp(matrix [][]int, k int, dp [][]int, state int, start int) int {
 	if dp[state][start] != -1 {
 		return dp[state][start]
 	}
@@ -37,30 +38,11 @@ func process(matrix [][]int, k int, dp [][]int, state int, start int) int {
 			continue
 		}
 
-		dp[state][start] = min(
+		dp[state][start] = utils.Min(
 			dp[state][start],
-			process(matrix, k, dp, xs, i)+matrix[start][i],
+			tsp(matrix, k, dp, xs, i)+matrix[start][i],
 		)
 	}
 
 	return dp[state][start]
-}
-
-func min(a, b int) int {
-	if a < b {
-		return a
-	}
-	return b
-}
-
-// generate a m*n grid slice
-func new2dSlice(m, n int) [][]int {
-	matrix := make([][]int, m)
-	for i := range matrix {
-		matrix[i] = make([]int, n)
-		for j := range matrix[i] {
-			matrix[i][j] = -1
-		}
-	}
-	return matrix
 }
